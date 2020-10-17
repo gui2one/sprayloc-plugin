@@ -1,0 +1,18 @@
+{
+  "name": "sprayfly/sprayloc-plugin",
+  "type": "project",
+  "license": "GPL",
+  "authors": [
+    {
+      "name": "gui2one",
+      "email": "guillaume.rouault.fx@gmail.com"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {},
+  "autoload": {
+    "psr-4": {
+      "Inc\\": "inc/"
+    }
+  }
+}
