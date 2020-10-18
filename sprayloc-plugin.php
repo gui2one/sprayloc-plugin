@@ -4,28 +4,32 @@
  * Plugin Name: Sprayloc Plugin
  * Author: gui2one
  * Text Domain: sprayloc-plugin
+ * @package sprayloc
  */
 
 require_once( plugin_dir_path( __FILE__ ) . "vendor/autoload.php");
 
-use Inc\base\testClass;
+use Inc\admin\Admin;
 
 
 
 
 function sprayloc_activate_plugin(){
-    // $test_class = new testClass();
+    
+
+    flush_rewrite_rules();
 }
 register_activation_hook( __FILE__, 'sprayloc_activate_plugin' );
 
-
+$admin = new Admin();
+$admin->register();
 function sprayloc_deactivate_plugin(){
-    
+    flush_rewrite_rules();
 }
 register_deactivation_hook( __FILE__, 'sprayloc_deactivate_plugin' );
 
 
-function addItemToTaxonomy($name, $slug, $taxonomy){
+function addItemToTaxonomy($taxonomy, $name, $slug){
     $cat_exists = term_exists( $slug, $taxonomy );
 
     if( !$cat_exists){
@@ -89,12 +93,13 @@ function register_custom_post_type(){
     );
     
     // insert default materiel types
-    addItemToTaxonomy('Non Classé', 'non-classe', 'materiel_cat');
-    addItemToTaxonomy('Caméra', 'camera', 'materiel_cat');
-    addItemToTaxonomy('Lumière', 'lumiere', 'materiel_cat');
-    addItemToTaxonomy('Streaming', 'streaming', 'materiel_cat');
-    addItemToTaxonomy('Cable', 'cable', 'materiel_cat');
+    addItemToTaxonomy('materiel_cat', 'Non Classé', 'non-classe' );
+    addItemToTaxonomy('materiel_cat', 'Caméra'    , 'camera'     );
+    addItemToTaxonomy('materiel_cat', 'Lumière'   , 'lumiere'    );
+    addItemToTaxonomy('materiel_cat', 'Streaming' , 'streaming'  );
+    addItemToTaxonomy('materiel_cat', 'Cable'     , 'cable'      );
 
 }
 
 add_action("init", 'register_custom_post_type', 10);
+

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @package spraylocPlugin
+ * @package sprayloc
  */
 
 namespace Inc\base;
