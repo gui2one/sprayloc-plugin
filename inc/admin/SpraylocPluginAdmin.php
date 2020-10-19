@@ -93,15 +93,14 @@ class SpraylocPluginAdmin {
         $sprayloc_plugin_admin_options = get_option( 'sprayloc_plugin_admin_option_name' ); // Array of All Options
         $json_data_0 = $sprayloc_plugin_admin_options['json_data_0']; // json data
         $json = json_decode($json_data_0);
-        var_dump($json);
-        ?>
-        
-        
+        // var_dump($json);
+        $output = do_shortcode( "[sprayloc_test]", false );
 
-
+        echo $output;
+        ?>    
         
-        
-    <?php }
+        <?php 
+    }
 
 }
 // if ( is_admin() )
