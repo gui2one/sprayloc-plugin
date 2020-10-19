@@ -9,7 +9,8 @@
 
 require_once( plugin_dir_path( __FILE__ ) . "vendor/autoload.php");
 
-use Inc\admin\Admin;
+// use Inc\admin\Admin;
+use Inc\admin\SpraylocPluginAdmin;
 
 
 
@@ -21,8 +22,7 @@ function sprayloc_activate_plugin(){
 }
 register_activation_hook( __FILE__, 'sprayloc_activate_plugin' );
 
-$admin = new Admin();
-$admin->register();
+
 function sprayloc_deactivate_plugin(){
     flush_rewrite_rules();
 }
@@ -103,3 +103,7 @@ function register_custom_post_type(){
 
 add_action("init", 'register_custom_post_type', 10);
 
+// $admin = new Admin();
+// $admin->register();
+
+$admin = new SpraylocPluginAdmin();
