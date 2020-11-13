@@ -125,8 +125,10 @@ function sprayloc_shortcode(){
 
         $str .= "<div class='product-card'>";
         $str .= "<h1>$display_name</h1>";
-        $str .= "<div class='desc block-ellipsis'>$external_remark</div>";
-        $str .= "<img src='$image' alt='$image_alt'>";
+        if($external_remark != '')
+            $str .= "<div class='desc block-ellipsis'>$external_remark</div>";
+        
+            $str .= "<img src='$image' alt='$image_alt'>";
         $str .= "</div>";
     }
 
@@ -135,4 +137,17 @@ function sprayloc_shortcode(){
     return $str;
 }
 
-add_shortcode( 'sprayloc_test', 'sprayloc_shortcode' );
+add_shortcode( 'sprayloc_equipments', 'sprayloc_shortcode' );
+
+function vue_app_short_code(){
+    // $str = '';
+
+    $str = get_template_part('../../plugins/sprayloc-plugin/components/VueApp' );
+    // $str ='<div id="vue_app"><h1>{{message}}</h1></div>';
+
+    // var_dump($str);
+    return $str ;
+}
+
+
+add_shortcode( 'sprayloc_vue_app', 'vue_app_short_code' );
