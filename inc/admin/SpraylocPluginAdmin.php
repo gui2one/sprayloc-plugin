@@ -104,12 +104,17 @@ class SpraylocPluginAdmin {
 		// 	'<textarea class="large-text" rows="5" name="sprayloc_plugin_admin_option_name[json_data_rentman]" id="json_data_rentman">%s</textarea>',
 		// 	isset( $this->sprayloc_plugin_admin_options['json_data_rentman'] ) ? esc_attr( $this->sprayloc_plugin_admin_options['json_data_rentman']) : ''
 		// );
+		$online_data = json_encode($this->loadRentManData());
+	
 
 		$str = "<h3>RentMan</h3>";
 		$str .= '<textarea class="large-text" rows="5" name="sprayloc_plugin_admin_option_name[json_data_rentman]" id="json_data_rentman">';
 		
-		$str .= json_encode($this->loadRentManData());
+		$str .= $online_data;
 		$str .= '</textarea>';
+		$str .= '<button id="update_equipment_btn" action="add_equipment" value="'.esc_attr($online_data).'">update</button>';
+		
+		
 		// $str .= $this->sprayloc_plugin_admin_options['json_data_rentman'];
 		// var_dump($this->loadRentManData());
 		printf("%s", $str);
@@ -192,6 +197,7 @@ class SpraylocPluginAdmin {
 		var_dump($to_add);
 		if(count($to_add) > 0){
 		
+			// $this->addEquipment($this->getEquipmentById($online_array,$to_add[0]));
 			var_dump($this->getEquipmentById($online_array,$to_add[0]));
 		}
 			
@@ -206,6 +212,16 @@ class SpraylocPluginAdmin {
 			}
 		}
 		return null;
+	}
+
+	public function addEquipment($object){
+		$settings = get_option( "sprayloc_plugin_admin_option_name" );
+		$json_data = json_decode($settings["json_data_0"]);
+
+		array_push($json_data, $object);
+
+		$settings["json_data_0"] = json_encode($json_data);
+		update_option( "sprayloc_plugin_admin_option_name", $settings , true);
 	}
 
 }

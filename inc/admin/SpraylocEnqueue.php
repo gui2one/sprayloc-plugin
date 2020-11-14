@@ -14,9 +14,9 @@
     }
 
     function enqueueAdmin(){
-        wp_enqueue_style( "sprayloc-plugin-css", plugin_dir_url( dirname(__FILE__ ,2)). "/css/admin-style.css", array(), 1.0, 'all' );
-        wp_enqueue_script( "vuejs", plugin_dir_url( dirname(__FILE__ ,2)). "/js/libs/vue.js", array(), 1.0, false );
-        wp_enqueue_script( "main_vuejs", plugin_dir_url( dirname(__FILE__ ,2)). "/js/main.js", array(), 1.0, true );
+        wp_enqueue_style( "sprayloc-plugin-css", plugin_dir_url( dirname(__FILE__ ,2)). "css/admin-style.css", array(), 1.0, 'all' );
+        // wp_enqueue_script( "vuejs", plugin_dir_url( dirname(__FILE__ ,2)). "/js/libs/vue.js", array(), 1.0, false );
+        wp_enqueue_script( "main_vuejs", plugin_dir_url( dirname(__FILE__ ,2)). "js/main.js", array("jquery"), 1.0, true );
     }
 
     function enqueueClient(){
