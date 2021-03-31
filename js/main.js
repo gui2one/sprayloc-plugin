@@ -22,7 +22,8 @@ $(document).ready(function () {
     }).done(function (msg) {
       console.log("return message :");
       console.log(msg);
-      document.location.reload();
+      // document.location.reload();
     });
   });
+
 });

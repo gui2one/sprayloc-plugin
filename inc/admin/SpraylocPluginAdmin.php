@@ -42,9 +42,7 @@ class SpraylocPluginAdmin
 				<?php
                     settings_fields('sprayloc_plugin_admin_option_group');
         do_settings_sections('sprayloc-plugin-admin-section');
-        submit_button();
-        $this->compareData();
-        $this->makePreview(); ?>
+        submit_button(); ?>
 			</form>
 		</div>
 	<?php
@@ -72,22 +70,6 @@ class SpraylocPluginAdmin
             'sprayloc-plugin-admin-section', // page
             'sprayloc_plugin_admin_setting_section' // section
         );
-
-        add_settings_field(
-            'json_data_0', // id
-            'json data', // title
-            array( $this, 'json_data_0_callback' ), // callback
-            'sprayloc-plugin-admin-section', // page
-            'sprayloc_plugin_admin_setting_section' // section
-        );
-
-        add_settings_field(
-            'json_data_rentman', // id
-            'json data RentMan', // title
-            array( $this, 'json_data_rentman_callback' ), // callback
-            'sprayloc-plugin-admin-section', // page
-            'sprayloc_plugin_admin_setting_section' // section
-        );
     }
 
     public function sprayloc_plugin_admin_sanitize($input)
@@ -108,40 +90,15 @@ class SpraylocPluginAdmin
     {
         $value = isset($this->sprayloc_plugin_admin_options['rentman_api_key']) ? esc_attr($this->sprayloc_plugin_admin_options['rentman_api_key']) : '';
 
-        $str = "";
-        $str .= '<textarea class="large-text" rows="5" name="sprayloc_plugin_admin_option_name[rentman_api_key]" id="rentman_api_key">';
-        
-        $str .= esc_attr($value);
-        $str .= '</textarea>';
-
-        printf("%s", $str);
-    }
-    
-    public function json_data_0_callback()
-    {
         printf(
-            '<textarea class="large-text" rows="5" name="sprayloc_plugin_admin_option_name[json_data_0]" id="json_data_0">%s</textarea>',
-            isset($this->sprayloc_plugin_admin_options['json_data_0']) ? esc_attr($this->sprayloc_plugin_admin_options['json_data_0']) : ''
+            '<textarea class="large-text" rows="5" name="sprayloc_plugin_admin_option_name[rentman_api_key]" id="rentman_api_key">%s</textarea>',
+            $value
         );
     }
 
-    
-    public function json_data_rentman_callback()
-    {
-        $online_data = json_encode($this->loadRentManData());
 
-        $str = "<h3>RentMan</h3>";
-        $str .= '<textarea class="large-text" rows="5" name="sprayloc_plugin_admin_option_name[json_data_rentman]" id="json_data_rentman">';
-        
-        $str .= $online_data;
-        $str .= '</textarea>';
-        $str .= '<button id="update_equipment_btn" action="add_equipment" value="'.esc_attr($online_data).'">update</button>';
-        
-        // $str .= $this->sprayloc_plugin_admin_options['json_data_rentman'];
-        // var_dump($this->loadRentManData());
-        printf("%s", $str);
-    }
-    
+
+
 
     public function makePreview()
     {
@@ -156,97 +113,4 @@ class SpraylocPluginAdmin
         
         <?php
     }
-    
-    public function loadRentManData()
-    {
-        $ch = curl_init("http://sprayloc.fr/V2/api_test/get_cors.php?option=equipments"); // such as http://example.com/example.xml
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-        $data = curl_exec($ch);
-        curl_close($ch);
-
-        $options = get_option('sprayloc_plugin_admin_option_name'); // Array of All Options
-
-        $options["json_data_rentman"] = $data;
-
-        update_option('sprayloc_plugin_admin_option_name', $options);
-        return json_decode($data);
-    }
-
-    public function compareData()
-    {
-        $sprayloc_plugin_admin_options = get_option('sprayloc_plugin_admin_option_name'); // Array of All Options
-        $json_data_0 = $sprayloc_plugin_admin_options['json_data_0']; // json data
-        $json_data_rentman = $sprayloc_plugin_admin_options['json_data_rentman']; // json data
-        
-        $saved_array = json_decode($json_data_0);
-        $saved_ids = array();
-        foreach ($saved_array as $key => $value) {
-            array_push($saved_ids, $value->{'id'});
-        }
-
-        // var_dump($saved_ids);
-
-
-        // $online_array = json_decode($json_data_rentman);
-        // // var_dump($online_array);
-        // $online_ids = array();
-        // foreach ($online_array as $key => $value) {
-        //     array_push($online_ids, $value->{'id'});
-        // }
-        // // var_dump($online_ids);
-
-        // $to_delete = [];
-        // foreach ($saved_ids as $id) {
-        //     if (!in_array($id, $online_ids)) {
-        //         array_push($to_delete, $id);
-        //     }
-        // }
-
-        // var_dump($to_delete);
-
-        // $to_add = [];
-        // foreach ($online_ids as $id) {
-        //     if (!in_array($id, $saved_ids)) {
-        //         array_push($to_add, $id);
-        //     }
-        // }
-
-        // var_dump($to_add);
-        // if (count($to_add) > 0) {
-        
-        //     // $this->addEquipment($this->getEquipmentById($online_array,$to_add[0]));
-        //     var_dump($this->getEquipmentById($online_array, $to_add[0]));
-        // }
-    }
-
-    public function getEquipmentById($data, $id)
-    {
-        foreach ($data as $key => $value) {
-            if ($value->{'id'} == $id) {
-                return $value;
-            }
-        }
-        return null;
-    }
-
-    public function addEquipment($object)
-    {
-        $settings = get_option("sprayloc_plugin_admin_option_name");
-        $json_data = json_decode($settings["json_data_0"]);
-
-        array_push($json_data, $object);
-
-        $settings["json_data_0"] = json_encode($json_data);
-        update_option("sprayloc_plugin_admin_option_name", $settings, true);
-    }
 }
-// if ( is_admin() )
-// 	$sprayloc_plugin_admin = new SpraylocPluginAdmin();
-
-/*
- * Retrieve this value with:
- * $sprayloc_plugin_admin_options = get_option( 'sprayloc_plugin_admin_option_name' ); // Array of All Options
- * $json_data_0 = $sprayloc_plugin_admin_options['json_data_0']; // json data
- */
