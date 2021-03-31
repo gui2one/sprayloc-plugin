@@ -7,28 +7,32 @@
 
 namespace Inc\admin;
 
-class SpraylocPluginAdmin {
-	private $sprayloc_plugin_admin_options;
+class SpraylocPluginAdmin
+{
+    private $sprayloc_plugin_admin_options;
 
-	public function __construct() {
-		add_action( 'admin_menu', array( $this, 'sprayloc_plugin_admin_add_plugin_page' ) );
-		add_action( 'admin_init', array( $this, 'sprayloc_plugin_admin_page_init' ) );
-	}
+    public function __construct()
+    {
+        add_action('admin_menu', array( $this, 'sprayloc_plugin_admin_add_plugin_page' ));
+        add_action('admin_init', array( $this, 'sprayloc_plugin_admin_page_init' ));
+    }
 
-	public function sprayloc_plugin_admin_add_plugin_page() {
-		add_menu_page(
-			'Sprayloc Options', // page_title
-			'Sprayloc Options', // menu_title
-			'manage_options', // capability
-			'sprayloc-plugin-admin', // menu_slug
-			array( $this, 'sprayloc_plugin_admin_create_admin_page' ), // function
-			'dashicons-admin-generic', // icon_url
-			3 // position
-		);
-	}
+    public function sprayloc_plugin_admin_add_plugin_page()
+    {
+        add_menu_page(
+            'Sprayloc Options', // page_title
+            'Sprayloc Options', // menu_title
+            'manage_options', // capability
+            'sprayloc-plugin-admin', // menu_slug
+            array( $this, 'sprayloc_plugin_admin_create_admin_page' ), // function
+            'dashicons-admin-generic', // icon_url
+            3 // position
+        );
+    }
 
-	public function sprayloc_plugin_admin_create_admin_page() {
-		$this->sprayloc_plugin_admin_options = get_option( 'sprayloc_plugin_admin_option_name' ); ?>
+    public function sprayloc_plugin_admin_create_admin_page()
+    {
+        $this->sprayloc_plugin_admin_options = get_option('sprayloc_plugin_admin_option_name'); ?>
 
 		<div class="wrap">
 			<h2>Sprayloc Options</h2>
@@ -36,199 +40,212 @@ class SpraylocPluginAdmin {
 
 			<form method="post" action="options.php">
 				<?php
-					settings_fields( 'sprayloc_plugin_admin_option_group' );
-					do_settings_sections( 'sprayloc-plugin-admin-section' );
-                    submit_button();
-					$this->compareData();
-					$this->makePreview();
-					
-					
-				?>
+                    settings_fields('sprayloc_plugin_admin_option_group');
+        do_settings_sections('sprayloc-plugin-admin-section');
+        submit_button();
+        $this->compareData();
+        $this->makePreview(); ?>
 			</form>
 		</div>
-	<?php }
+	<?php
+    }
 
-	public function sprayloc_plugin_admin_page_init() {
-		register_setting(
-			'sprayloc_plugin_admin_option_group', // option_group
-			'sprayloc_plugin_admin_option_name', // option_name
-			array( $this, 'sprayloc_plugin_admin_sanitize' ) // sanitize_callback
-		);
+    public function sprayloc_plugin_admin_page_init()
+    {
+        register_setting(
+            'sprayloc_plugin_admin_option_group', // option_group
+            'sprayloc_plugin_admin_option_name', // option_name
+            array( $this, 'sprayloc_plugin_admin_sanitize' ) // sanitize_callback
+        );
 
-		add_settings_section(
-			'sprayloc_plugin_admin_setting_section', // id
-			'Settings', // title
-			array( $this, 'sprayloc_plugin_admin_section_info' ), // callback
-			'sprayloc-plugin-admin-section' // page
-		);
+        add_settings_section(
+            'sprayloc_plugin_admin_setting_section', // id
+            'Settings', // title
+            array( $this, 'sprayloc_plugin_admin_section_info' ), // callback
+            'sprayloc-plugin-admin-section' // page
+        );
 
-		add_settings_field(
-			'json_data_0', // id
-			'json data', // title
-			array( $this, 'json_data_0_callback' ), // callback
-			'sprayloc-plugin-admin-section', // page
-			'sprayloc_plugin_admin_setting_section' // section
-		);
+        add_settings_field(
+            'rentman_api_key', // id
+            'RentMan API Key', // title
+            array( $this, 'rentman_api_key_callback' ), // callback
+            'sprayloc-plugin-admin-section', // page
+            'sprayloc_plugin_admin_setting_section' // section
+        );
 
-		add_settings_field(
-			'json_data_rentman', // id
-			'json data RentMan', // title
-			array( $this, 'json_data_rentman_callback' ), // callback
-			'sprayloc-plugin-admin-section', // page
-			'sprayloc_plugin_admin_setting_section' // section
-		);
-	}
+        add_settings_field(
+            'json_data_0', // id
+            'json data', // title
+            array( $this, 'json_data_0_callback' ), // callback
+            'sprayloc-plugin-admin-section', // page
+            'sprayloc_plugin_admin_setting_section' // section
+        );
 
-	public function sprayloc_plugin_admin_sanitize($input) {
-		// $sanitary_values = array();
-		// if ( isset( $input['json_data_0'] ) ) {
-		// 	$sanitary_values['json_data_0'] = esc_textarea( $input['json_data_0'] );
-		// }
+        add_settings_field(
+            'json_data_rentman', // id
+            'json data RentMan', // title
+            array( $this, 'json_data_rentman_callback' ), // callback
+            'sprayloc-plugin-admin-section', // page
+            'sprayloc_plugin_admin_setting_section' // section
+        );
+    }
 
-		return $input;
-	}
+    public function sprayloc_plugin_admin_sanitize($input)
+    {
+        // $sanitary_values = array();
+        // if ( isset( $input['json_data_0'] ) ) {
+        // 	$sanitary_values['json_data_0'] = esc_textarea( $input['json_data_0'] );
+        // }
 
-	public function sprayloc_plugin_admin_section_info() {
-		
-	}
+        return $input;
+    }
 
-	public function json_data_0_callback() {
-		printf(
-			'<textarea class="large-text" rows="5" name="sprayloc_plugin_admin_option_name[json_data_0]" id="json_data_0">%s</textarea>',
-			isset( $this->sprayloc_plugin_admin_options['json_data_0'] ) ? esc_attr( $this->sprayloc_plugin_admin_options['json_data_0']) : ''
-		);
-	}
-	
-	public function json_data_rentman_callback() {
-		// printf(
-		// 	'<textarea class="large-text" rows="5" name="sprayloc_plugin_admin_option_name[json_data_rentman]" id="json_data_rentman">%s</textarea>',
-		// 	isset( $this->sprayloc_plugin_admin_options['json_data_rentman'] ) ? esc_attr( $this->sprayloc_plugin_admin_options['json_data_rentman']) : ''
-		// );
-		$online_data = json_encode($this->loadRentManData());
-	
+    public function sprayloc_plugin_admin_section_info()
+    {
+    }
 
-		$str = "<h3>RentMan</h3>";
-		$str .= '<textarea class="large-text" rows="5" name="sprayloc_plugin_admin_option_name[json_data_rentman]" id="json_data_rentman">';
-		
-		$str .= $online_data;
-		$str .= '</textarea>';
-		$str .= '<button id="update_equipment_btn" action="add_equipment" value="'.esc_attr($online_data).'">update</button>';
-		
-		
-		// $str .= $this->sprayloc_plugin_admin_options['json_data_rentman'];
-		// var_dump($this->loadRentManData());
-		printf("%s", $str);
-		
-    }	
+    public function rentman_api_key_callback()
+    {
+        $value = isset($this->sprayloc_plugin_admin_options['rentman_api_key']) ? esc_attr($this->sprayloc_plugin_admin_options['rentman_api_key']) : '';
+
+        $str = "";
+        $str .= '<textarea class="large-text" rows="5" name="sprayloc_plugin_admin_option_name[rentman_api_key]" id="rentman_api_key">';
+        
+        $str .= esc_attr($value);
+        $str .= '</textarea>';
+
+        printf("%s", $str);
+    }
+    
+    public function json_data_0_callback()
+    {
+        printf(
+            '<textarea class="large-text" rows="5" name="sprayloc_plugin_admin_option_name[json_data_0]" id="json_data_0">%s</textarea>',
+            isset($this->sprayloc_plugin_admin_options['json_data_0']) ? esc_attr($this->sprayloc_plugin_admin_options['json_data_0']) : ''
+        );
+    }
+
+    
+    public function json_data_rentman_callback()
+    {
+        $online_data = json_encode($this->loadRentManData());
+
+        $str = "<h3>RentMan</h3>";
+        $str .= '<textarea class="large-text" rows="5" name="sprayloc_plugin_admin_option_name[json_data_rentman]" id="json_data_rentman">';
+        
+        $str .= $online_data;
+        $str .= '</textarea>';
+        $str .= '<button id="update_equipment_btn" action="add_equipment" value="'.esc_attr($online_data).'">update</button>';
+        
+        // $str .= $this->sprayloc_plugin_admin_options['json_data_rentman'];
+        // var_dump($this->loadRentManData());
+        printf("%s", $str);
+    }
     
 
-    public function makePreview(){ 
-        $sprayloc_plugin_admin_options = get_option( 'sprayloc_plugin_admin_option_name' ); // Array of All Options
+    public function makePreview()
+    {
+        $sprayloc_plugin_admin_options = get_option('sprayloc_plugin_admin_option_name'); // Array of All Options
         $json_data_0 = $sprayloc_plugin_admin_options['json_data_0']; // json data
         $json = json_decode($json_data_0);
         // var_dump($json);
         // $output = do_shortcode( "[sprayloc_equipments]", false );
-        $output = do_shortcode( "[sprayloc_equipments]", false );
+        $output = do_shortcode("[sprayloc_equipments]", false);
 
-        echo $output;
-        ?>    
+        echo $output; ?>    
         
-        <?php 
-	}
-	
-	public function loadRentManData(){
-		$ch = curl_init("http://sprayloc.fr/V2/api_test/get_cors.php?option=equipments"); // such as http://example.com/example.xml
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_HEADER, 0);
-		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-		$data = curl_exec($ch);
-		curl_close($ch);
+        <?php
+    }
+    
+    public function loadRentManData()
+    {
+        $ch = curl_init("http://sprayloc.fr/V2/api_test/get_cors.php?option=equipments"); // such as http://example.com/example.xml
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+        $data = curl_exec($ch);
+        curl_close($ch);
 
-		$options = get_option( 'sprayloc_plugin_admin_option_name' ); // Array of All Options
+        $options = get_option('sprayloc_plugin_admin_option_name'); // Array of All Options
 
-		$options["json_data_rentman"] = $data;
+        $options["json_data_rentman"] = $data;
 
-		update_option('sprayloc_plugin_admin_option_name', $options );
-		return json_decode($data);
-	}
+        update_option('sprayloc_plugin_admin_option_name', $options);
+        return json_decode($data);
+    }
 
-	public function compareData(){
-        $sprayloc_plugin_admin_options = get_option( 'sprayloc_plugin_admin_option_name' ); // Array of All Options
-		$json_data_0 = $sprayloc_plugin_admin_options['json_data_0']; // json data		
-		$json_data_rentman = $sprayloc_plugin_admin_options['json_data_rentman']; // json data	
-		
-		$saved_array = json_decode($json_data_0);
-		$saved_ids = array();
-		foreach($saved_array as $key => $value){
+    public function compareData()
+    {
+        $sprayloc_plugin_admin_options = get_option('sprayloc_plugin_admin_option_name'); // Array of All Options
+        $json_data_0 = $sprayloc_plugin_admin_options['json_data_0']; // json data
+        $json_data_rentman = $sprayloc_plugin_admin_options['json_data_rentman']; // json data
+        
+        $saved_array = json_decode($json_data_0);
+        $saved_ids = array();
+        foreach ($saved_array as $key => $value) {
+            array_push($saved_ids, $value->{'id'});
+        }
 
-			array_push($saved_ids, $value->{'id'});
-		}
-
-		// var_dump($saved_ids);
+        // var_dump($saved_ids);
 
 
-		$online_array = json_decode($json_data_rentman);
-		// var_dump($online_array);
-		$online_ids = array();
-		foreach($online_array as $key => $value){
+        // $online_array = json_decode($json_data_rentman);
+        // // var_dump($online_array);
+        // $online_ids = array();
+        // foreach ($online_array as $key => $value) {
+        //     array_push($online_ids, $value->{'id'});
+        // }
+        // // var_dump($online_ids);
 
-			array_push($online_ids, $value->{'id'});
-		}
-		// var_dump($online_ids);
+        // $to_delete = [];
+        // foreach ($saved_ids as $id) {
+        //     if (!in_array($id, $online_ids)) {
+        //         array_push($to_delete, $id);
+        //     }
+        // }
 
-		$to_delete = [];
-		foreach($saved_ids as $id){
+        // var_dump($to_delete);
 
-			if(!in_array($id, $online_ids)){
-				array_push($to_delete, $id);
-			}
-		}
+        // $to_add = [];
+        // foreach ($online_ids as $id) {
+        //     if (!in_array($id, $saved_ids)) {
+        //         array_push($to_add, $id);
+        //     }
+        // }
 
-		var_dump($to_delete);
+        // var_dump($to_add);
+        // if (count($to_add) > 0) {
+        
+        //     // $this->addEquipment($this->getEquipmentById($online_array,$to_add[0]));
+        //     var_dump($this->getEquipmentById($online_array, $to_add[0]));
+        // }
+    }
 
-		$to_add = [];
-		foreach($online_ids as $id){
+    public function getEquipmentById($data, $id)
+    {
+        foreach ($data as $key => $value) {
+            if ($value->{'id'} == $id) {
+                return $value;
+            }
+        }
+        return null;
+    }
 
-			if(!in_array($id, $saved_ids)){
-				array_push($to_add, $id);
-			}
-		}
+    public function addEquipment($object)
+    {
+        $settings = get_option("sprayloc_plugin_admin_option_name");
+        $json_data = json_decode($settings["json_data_0"]);
 
-		var_dump($to_add);
-		if(count($to_add) > 0){
-		
-			// $this->addEquipment($this->getEquipmentById($online_array,$to_add[0]));
-			var_dump($this->getEquipmentById($online_array,$to_add[0]));
-		}
-			
+        array_push($json_data, $object);
 
-	}
-
-	public function getEquipmentById($data, $id){
-
-		foreach($data as $key => $value){
-			if( $value->{'id'} == $id){
-				return $value;
-			}
-		}
-		return null;
-	}
-
-	public function addEquipment($object){
-		$settings = get_option( "sprayloc_plugin_admin_option_name" );
-		$json_data = json_decode($settings["json_data_0"]);
-
-		array_push($json_data, $object);
-
-		$settings["json_data_0"] = json_encode($json_data);
-		update_option( "sprayloc_plugin_admin_option_name", $settings , true);
-	}
-
+        $settings["json_data_0"] = json_encode($json_data);
+        update_option("sprayloc_plugin_admin_option_name", $settings, true);
+    }
 }
 // if ( is_admin() )
 // 	$sprayloc_plugin_admin = new SpraylocPluginAdmin();
 
-/* 
+/*
  * Retrieve this value with:
  * $sprayloc_plugin_admin_options = get_option( 'sprayloc_plugin_admin_option_name' ); // Array of All Options
  * $json_data_0 = $sprayloc_plugin_admin_options['json_data_0']; // json data
